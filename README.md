@@ -1,4 +1,6 @@
 # PyML-FinalProj
+### Dataset
+https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet
 
 ### Contact info
  | Name | Phone Number | Email | Availability |
