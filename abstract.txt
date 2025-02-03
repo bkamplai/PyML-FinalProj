@@ -1,1 +1,4 @@
+Title: ASL Alphabet Classifier
 
+Abstract:
+This project will utilize a dataset of images containing ASL signs for each letter of the alphabet in order to train a model to classify signs from images, videos, and live feeds.
