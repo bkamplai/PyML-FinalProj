@@ -16,5 +16,4 @@ American Sign Language (ASL) is a vital means of communication for the Deaf and 
 
 Project aims to develop a machine learning-based classifier for ASL fingerspelling recognition using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL education and accessibility.
 
-### Dataset
-https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet
+### [Dataset](https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet)
