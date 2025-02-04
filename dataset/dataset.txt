@@ -1,0 +1,2 @@
+**Put dataset images in this folder**
+https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet
