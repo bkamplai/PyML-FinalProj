@@ -55,12 +55,59 @@ def create_cnn_model() -> Sequential:
     return model
 
 
+# Define Improved CNN Model
+def create_improved_cnn_model() -> Sequential:
+    """
+    Creates an improved CNN model for ASL fingerprinting classification.
+
+    Returns:
+        A compiled Keras Sequential model.
+    """
+    model = Sequential([
+        # Convolutional Layer 1
+        Conv2D(32, (3, 3), activation="relu", input_shape=(128, 128, 3)),
+        MaxPooling2D((2, 2)),
+
+        # Convolutional Layer 2
+        Conv2D(64, (3, 3), activation="relu"),
+        MaxPooling2D((2, 2)),
+
+        # Convolutional Layer 3
+        Conv2D(128, (3, 3), activation="relu"),
+        MaxPooling2D((2, 2)),
+
+        # Additional Convolutional Layer
+        Conv2D(128, (3, 3), activation="relu"),
+        MaxPooling2D((2, 2)),
+
+        # Flatten the feaure maps
+        Flatten(),
+
+        # Fully Connected Layer
+        Dense(256, activation="relu"),  # Increasded from 128 -> 256
+        Dropout(0.3),   # Reduced dropout from 0.5 -> 0.3
+        Dense(27, activation="softmax")  # 27 classes (A-z + Blank)
+    ])
+
+    # Compile Model
+    model.compile(
+        # Reduced learning rate from 0.001 -> 0.005
+        optimizer=Adam(learning_rate=0.0005),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    return model
+
+
 # Create and summarize the model
-model = create_cnn_model()
+# model = create_cnn_model()
+model = create_improved_cnn_model()
 model.summary()
 
 # Train the Model
-EPOCHS = 10  # Start with 10, can increase later
+# EPOCHS = 10  # Start with 10, can increase later
+EPOCHS = 30  # Increased from 10 -> 30
 history = model.fit(
     train_generator,
     validation_data=val_generator,
@@ -68,14 +115,17 @@ history = model.fit(
 )
 
 # Save Model
-model.save("asl_fingerspell_cnn.keras")
+# model.save("asl_fingerspell_cnn.keras")
+model.save("asl_fingerspell_cnn_improved.keras")
 
 # Evaluae on Test Set
 test_loss, test_acc = model.evaluate(test_generator)
-print(f"\nTest Accuracy: {test_acc:.4f}")
+# print(f"\nTest Accuracy: {test_acc:.4f}")
+print(f"\n Improved Model Test Accuracy: {test_acc:.4f}")
 
 # Save training history
-history_path = "training_history.pkl"
+# history_path = "training_history.pkl"
+history_path = "training_history_improved.pkl"
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
