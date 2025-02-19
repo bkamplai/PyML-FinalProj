@@ -2,8 +2,9 @@ import sys  # type: ignore
 import os
 import pickle
 from tensorflow.keras.models import Sequential  # type: ignore
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout   # type: ignore
-from tensorflow.keras.optimizers import Adam # type: ignore
+from tensorflow.keras.layers import Conv2D, MaxPooling2D    # type: ignore
+from tensorflow.keras.layers import Flatten, Dense, Dropout  # type: ignore
+from tensorflow.keras.optimizers import Adam  # type: ignore
 
 # Get the parent directory and add it to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
