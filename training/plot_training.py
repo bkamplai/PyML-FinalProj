@@ -2,7 +2,7 @@ import pickle   # type: ignore
 import matplotlib.pyplot as plt
 
 # Load training history from the saved model
-history_path = "training_history.pkl"
+history_path = "training_history_improved.pkl"
 
 
 def load_training_history():
@@ -48,7 +48,7 @@ def plot_training_curves(history):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig("training_curves.png")  # Save the figure
+    plt.savefig("training_curves_improved.png")  # Save the figure
     plt.show()
 
 
@@ -56,4 +56,4 @@ if __name__ == "__main__":
     print("Loading training history...")
     history = load_training_history()
     plot_training_curves(history)
-    print("Training curves saved as 'training_curves.png'.")
+    print("Training curves saved as 'training_curves_improved.png'.")
