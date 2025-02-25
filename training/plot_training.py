@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 # Load training history from the saved model
 cnn_history_path = "training_history_improved.pkl"
 mobilenet_history_path = "training_history_mobilenet.pkl"
+mobilenet_finetuned_history_path = "training_history_mobilenet_finetuned.pkl"
 
 
 def load_training_history(file_path: str) -> dict:
@@ -16,8 +17,7 @@ def load_training_history(file_path: str) -> dict:
         epoch.
     """
     with open(file_path, "rb") as f:
-        history = pickle.load(f)
-    return history
+        return pickle.load(f)
 
 
 def plot_training_curves(history):
@@ -51,21 +51,25 @@ def plot_training_curves(history):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig("training_curves_mobilenet.png")  # Save the figure
+    plt.savefig("training_curves_mobilenet_finetuned.png")  # Save the figure
     plt.show()
 
 
-def plot_comparison(cnn_history: dict, mobilenet_history: dict):
+def plot_comparison(cnn_history: dict, mobilenet_history: dict,
+                    mobilenet_finetuned_history: dict):
     """
-    Plots training & validation accuracy/loss comparisons between CNN and
-    MobileNetV2.
+    Plots training & validation accuracy/loss comparisons between CNN,
+    MobileNetV2 and Fine-Tuned MobileNetV2.
 
     Args:
         cnn_history (dict): History of CNN model training.
         mobilenet_history (dict): History of MobileNetV2 training.
+        mobilenet_finetuned_history (dict): History of MobileNetV2 fine-tuned.
     """
     epochs_cnn = range(1, len(cnn_history["accuracy"]) + 1)
     epochs_mobilenet = range(1, len(mobilenet_history["accuracy"]) + 1)
+    epochs_mobilenet_finetuned = range(1, len(mobilenet_finetuned_history[
+        "accuracy"]) + 1)
 
     # Set up the figure
     plt.figure(figsize=(12, 5))
@@ -79,9 +83,15 @@ def plot_comparison(cnn_history: dict, mobilenet_history: dict):
              label="MobileNet Train Acc")
     plt.plot(epochs_mobilenet, mobilenet_history["val_accuracy"], "r--",
              label="MobileNet Val Acc")
+    plt.plot(epochs_mobilenet_finetuned,
+             mobilenet_finetuned_history["accuracy"], "g-",
+             label="Fine-Tuned MobileNet Train Acc")
+    plt.plot(epochs_mobilenet_finetuned,
+             mobilenet_finetuned_history["val_accuracy"], "g--",
+             label="Fine-Tuned MobileNet Val Acc")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
-    plt.title("CNN vs. MobileNetV2 - Accuracy")
+    plt.title("CNN vs. MobileNetV2 vs. Fine-Tuned MobileNet - Accuracy")
     plt.legend()
 
     # Plot Loss Comparison
@@ -92,22 +102,30 @@ def plot_comparison(cnn_history: dict, mobilenet_history: dict):
              label="MobileNet Train Loss")
     plt.plot(epochs_mobilenet, mobilenet_history["val_loss"], "r--",
              label="MobileNet Val Loss")
+    plt.plot(epochs_mobilenet_finetuned, mobilenet_finetuned_history["loss"],
+             "g-", label="Fine-Tuned MobileNet Train Loss")
+    plt.plot(epochs_mobilenet_finetuned,
+             mobilenet_finetuned_history["val_loss"], "g--",
+             label="Fine-Tuned MobileNet Val Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    plt.title("CNN vs. MobileNetV2 - Loss")
+    plt.title("CNN vs. MobileNetV2 vs. Fine-Tuned MobileNet - Loss")
     plt.legend()
 
     # Save and Show
     plt.tight_layout()
-    plt.savefig("cnn_vs_mobilenet.png")
+    plt.savefig("cnn_vs_mobilenet_finetuned.png")
     plt.show()
 
 
 if __name__ == "__main__":
-    print("Loading training history...")
+    print("Loading training histories...")
     cnn_history = load_training_history(cnn_history_path)
     mobilenet_history = load_training_history(mobilenet_history_path)
+    mobilenet_finetuned_history = load_training_history(
+        mobilenet_finetuned_history_path)
 
     print("Plotting training curves comparison...")
-    plot_comparison(cnn_history, mobilenet_history)
-    print("Comparison plot saved as 'cnn_vs_mobilenet.png'.")
+    plot_comparison(cnn_history, mobilenet_history,
+                    mobilenet_finetuned_history)
+    print("Comparison plot saved as 'cnn_vs_mobilenet_finetuned.png'.")

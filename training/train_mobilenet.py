@@ -49,8 +49,43 @@ def create_mobilenet_model() -> Sequential:
     return model
 
 
+# Define Fine-Tuned MobileNetV2 Model
+def create_finetuned_mobilenet() -> Sequential:
+    """
+    Creates a fine-tuned MobileNetV2 model by unfreezing some layers.
+
+    Returns:
+        A compiled Keras Sequential model.
+    """
+    # Load MobileNetV2 as the base model
+    base_model = MobileNetV2(input_shape=(128, 128, 3), include_top=False,
+                             weights="imagenet")
+
+    # Unfreeze the last few layers for fine-tuning
+    for layer in base_model.layers[-20:]:  # Unfreezing the last 20 layers
+        layer.trainable = True
+
+    # Add custom classification layers
+    model = Sequential([
+        base_model,
+        GlobalAveragePooling2D(),  # Reduce feature maps to a vector
+        Dense(256, activation="relu"),
+        Dropout(0.3),
+        Dense(27, activation="softmax")  # 27 classes (A-Z + Blank)
+    ])
+
+    # Compile the model with a lower learning rate for fine-tuning
+    model.compile(
+        optimizer=Adam(learning_rate=0.0001),  # Lower LR for gradual updates
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    return model
+
+
 # Create and summarize the model
-model = create_mobilenet_model()
+model = create_finetuned_mobilenet()
 model.summary()
 
 # Train the Model
@@ -62,10 +97,10 @@ history = model.fit(
 )
 
 # Save Model
-model.save("asl_fingerspell_mobilenet.keras")
+model.save("asl_fingerspell_mobilenet_finetuned.keras")
 
 # Save Training History
-history_path = "training_history_mobilenet.pkl"
+history_path = "training_history_mobilenet_finetuned.pkl"
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
@@ -73,4 +108,4 @@ print(f"Training history saved to {history_path}.")
 
 # Evaluate on Test Set
 test_loss, test_acc = model.evaluate(test_generator)
-print(f"\n MobileNetV2 Test Accuracy: {test_acc:.4f}")
+print(f"\n Fine-Tuned MobileNetV2 Test Accuracy: {test_acc:.4f}")
