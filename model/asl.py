@@ -15,6 +15,8 @@ import pandas as pd # For reading csv files
 """
 Takes in an image, runs it through the model, and returns what letter
 the model classified it as.
+
+asl_fingerspell_mobilenet_finetuned.keras
 """
 def classify(image):
     pass
