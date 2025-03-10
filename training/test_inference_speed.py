@@ -1,8 +1,8 @@
 import time
+import pickle
 import tensorflow as tf  # type: ignore
 import numpy as np
 import cv2
-import pickle
 
 # Load label mapping
 with open('../preprocessing/label_mapping.pkl', 'rb') as f:
@@ -52,9 +52,9 @@ def test_model_inference(model_path: str, test_image: np.ndarray,
 test_image = preprocess_image(TEST_IMAGE_PATH)
 
 # Run inference tests
-mobile_v2_time = test_model_inference("asl_fingerspell_mobilenet.keras",
+mobile_v2_time = test_model_inference("Models/asl_fingerspell_mobilenet_finetuned.keras",
                                       test_image, "Fine-Tuned MobileNetV2")
-resnet_time = test_model_inference("asl_fingerspell_resnet.keras", test_image,
+resnet_time = test_model_inference("Models/asl_fingerspell_resnet.keras", test_image,
                                    "ResNet50")
 
 # Print final comparison
