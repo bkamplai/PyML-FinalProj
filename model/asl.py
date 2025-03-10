@@ -11,58 +11,29 @@ import matplotlib.pyplot as plt # For plotting data
 import numpy as np # For math on tensors
 import pandas as pd # For reading csv files
 
-"""
-ASL Alphabet Fingerspelling Classifier:
-This program aims to develop a machine learning-based classifier for ASL fingerspelling recognition 
-using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL
-education and accessibility.
-
-Authors: Brandon Kamplain, Aidan Kavanagh, Elena Schmitt
-"""
-
-# Enter values for mean and std dev depending on model chosen
-model_mean = []
-model_std = []
-
-# Transform for images to keep consistent
-transform = transforms.Compose([
-    transforms.Resize(512, 512), # All images in the dataset are 512x512
-    transforms.ToTensor(), # Convert the image to a tensor for torch
-    transforms.Normalize(mean=model_mean, std=model_std) # Mean and std dev for model
-])
-
 
 """
-Dataset class for ASL alphabet images dataset.
-"""
-class ASLDataset(Dataset):
-    def __init__(self):
-        pass
-    
-    def __len__(self):
-        pass
+Takes in an image, runs it through the model, and returns what letter
+the model classified it as.
 
-    def __getitem__(self):
-        pass
-
-
+asl_fingerspell_mobilenet_finetuned.keras
 """
-Run the train data through a model and create/save the trained model to disk.
-"""
-def train():
+def classify(image):
     pass
 
 
 """
-Run the test data through the model and return the accuracy percentage.
+Main function where 
 """
-def test():
-    pass
-
-
 def main() -> None:
-    pass
+    # Name of saved model.
+    model_save = 'asl_model.pth'
 
+    # Check if model exists
+    if (os.path.exists(model_save)):
+        pass
+    else:
+        print("Model does not exist.\n")
 
 
 if __name__ == "__main__":
