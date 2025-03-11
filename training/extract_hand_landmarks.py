@@ -2,7 +2,7 @@ import os
 import cv2
 import mediapipe as mp  # type: ignore
 import pandas as pd  # type: ignore
-from tqdm import tqdm
+from tqdm import tqdm   # type: ignore
 
 # Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -30,15 +30,16 @@ def extract_landmarks(image_path: str):
     if results.multi_hand_landmarks:
         landmarks = []
         for landmark in results.multi_hand_landmarks[0].landmark:
-            landmarks.extend([landmark.x, landmark.y, landmark.z])  # Extract X, Y, Z
+            # Extract X, Y, Z
+            landmarks.extend([landmark.x, landmark.y, landmark.z])
 
         # Ensure exactly 63 landmark values (21 landmarks * 3 coordinates)
         if len(landmarks) == 63:
             return landmarks
         else:
-            print(f"Warning: {image_path} has {len(landmarks)} landmarks " +
-                  "instead of 63. Skipping.")
-            print(f"Extracted {len(landmarks)} landmarks for {image_path}")
+            print(f"{image_path} has {len(landmarks)} landmarks instead " +
+                  "of 63. Skipping.")
+            return None  # Skip images with incomplete landmarks
 
     return None  # No hand detected or incorrect landmarks
 
@@ -53,12 +54,17 @@ def process_dataset(dataset_path: str, dataset_type: str):
         if not os.path.isdir(class_dir):
             continue
 
+        # Skip "Blank" class since it has no hands
+        if class_name.lower() == "blank":
+            print(f"Skipping 'Blank' class: {class_dir}")
+            continue
+
         for img_name in os.listdir(class_dir):
             img_path = os.path.join(class_dir, img_name)
             landmarks = extract_landmarks(img_path)
 
             if landmarks:
-                data.append([class_name] + landmarks)
+                data.append([class_name, img_name] + landmarks)
 
     return data
 
@@ -69,7 +75,8 @@ test_data = process_dataset(TEST_PATH, "Test")
 
 # Debugging: Check if rows have the correct number of elements
 for i, row in enumerate(train_data):
-    if len(row) != 65:  # Expecting 65 columns (63 landmarks + class + filename)
+    # Expecting 65 columns (63 landmarks + class + filename)
+    if len(row) != 65:
         print(f"⚠️ Row {i} has {len(row)} values instead of 65: {row}")
 
 # Convert to DataFrame
