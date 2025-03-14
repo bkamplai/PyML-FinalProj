@@ -1,5 +1,8 @@
 # SignSense: ASL Fingerspelling Classifier
 
+### Model:
+#### asl_fingerspell_finetuned.keras
+
 ## Team Members
 
  | Name | Email | Roles |
