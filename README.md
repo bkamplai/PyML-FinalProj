@@ -1,7 +1,5 @@
 # SignSense: ASL Fingerspelling Classifier
 
-### Model: asl_fingerspell_finetuned.keras
-
 ## Team Members
 
  | Name | Email | Roles |
@@ -18,4 +16,5 @@ American Sign Language (ASL) is a vital means of communication for the Deaf and 
 
 Project aims to develop a machine learning-based classifier for ASL fingerspelling recognition using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL education and accessibility.
 
+### Model: asl_fingerspell_finetuned.keras
 ### [Dataset](https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet)
