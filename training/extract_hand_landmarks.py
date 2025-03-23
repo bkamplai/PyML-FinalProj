@@ -24,7 +24,7 @@ os.makedirs(LOW_CONFIDENCE_DIR, exist_ok=True)
 
 # Store confidence scores
 skipped_confidences: list = []
-low_confidence_images = []
+low_confidence_images: list = []
 
 
 # Preprocessing Functions
@@ -39,10 +39,10 @@ def adjust_gamma(image, gamma=1.0):
 def apply_clahe(image):
     """Apply CLAHE for contrast enhancement."""
     lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-    l, a, b = cv2.split(lab)
+    l_channel, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    l = clahe.apply(l)
-    enhanced = cv2.merge([l, a, b])
+    l_channel = clahe.apply(l_channel)
+    enhanced = cv2.merge([l_channel, a, b])
     return cv2.cvtColor(enhanced, cv2.COLOR_LAB2RGB)
 
 
@@ -86,37 +86,46 @@ def preprocess_image(image_path):
 
 # Hand Landmark Extraction
 def extract_landmarks(image_path: str, class_name: str):
-    """Extract 21 hand landmarks and confidence estimation from an image."""
+    """Extract 21 hand landmarks and Canny edge features from an image."""
     if class_name.lower() == "blank":
-        return None  # Skip 'Blank' class images immediately
+        return None  # Skip 'Blank' class
 
     image = preprocess_image(image_path)
     if image is None:
         return None
 
+    # Run MediaPipe Hands
     results = hands.process(image)
-
     if not results.multi_hand_landmarks:
         cv2.imwrite(os.path.join(SKIPPED_DIR, os.path.basename(image_path)),
                     image)
         return None
 
-    landmarks = []
-    # Process only the first detected hand
+    # Extract landmarks from first detected hand
     hand_landmarks = results.multi_hand_landmarks[0]
+    landmarks = []
     for landmark in hand_landmarks.landmark:
         landmarks.extend([landmark.x, landmark.y, landmark.z])
 
-    # Estimate confidence based on detection count (max_num_hands = 2)
+    # Estimate confidence (detection count / max_num_hands)
     avg_confidence = len(results.multi_hand_landmarks) / 2
+    if avg_confidence < 0.05:
+        skipped_confidences.append(avg_confidence)
+        cv2.imwrite(os.path.join(SKIPPED_DIR, os.path.basename(image_path)),
+                    image)
+        return None
 
-    # Log low-confidence images
-    if avg_confidence < 0.15:  # Threshold for low-confidence images
-        low_confidence_images.append([class_name, image_path, avg_confidence])
-        cv2.imwrite(os.path.join(LOW_CONFIDENCE_DIR,
-                                 os.path.basename(image_path)), image)
+    # Convert original image to grayscale for edge detection
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    edges = cv2.Canny(gray, threshold1=50, threshold2=150)
 
-    return [class_name, image_path, avg_confidence] + landmarks
+    # Resize edges to fixed size and flatten
+    edge_resized = cv2.resize(edges, (32, 32))  # 1024 values
+    # Normalize to 0–1
+    edge_vector = edge_resized.flatten().astype(np.float32) / 255.0
+
+    return [class_name, image_path, avg_confidence] + landmarks + \
+        edge_vector.tolist()
 
 
 # Dataset Processing
@@ -144,7 +153,7 @@ def process_dataset(dataset_path: str, dataset_type: str):
             else:
                 skipped_count += 1
 
-    print(f"⚠️ Skipped {skipped_count} images (excluding 'Blank' class).")
+    print(f"Skipped {skipped_count} images (excluding 'Blank' class).")
     return data
 
 
@@ -154,18 +163,19 @@ test_data = process_dataset(TEST_PATH, "Test")
 
 # Define DataFrame columns
 columns = ["Class", "Filename", "Confidence"] + \
-    [f"LM_{i}_{axis}" for i in range(21) for axis in ["x", "y", "z"]]
+    [f"LM_{i}_{axis}" for i in range(21) for axis in ["x", "y", "z"]] + \
+    [f"Edge_{i}" for i in range(32 * 32)]
 train_df = pd.DataFrame(train_data, columns=columns)
 test_df = pd.DataFrame(test_data, columns=columns)
 
 # Save extracted landmarks
-train_df.to_csv("train_hand_landmarks.csv", index=False)
-test_df.to_csv("test_hand_landmarks.csv", index=False)
+train_df.to_csv("../processed_data/train_hand_landmarks.csv", index=False)
+test_df.to_csv("../processed_data/test_hand_landmarks.csv", index=False)
 
 # Save low-confidence images metadata
 low_conf_df = pd.DataFrame(low_confidence_images,
                            columns=["Class", "Filename", "Confidence"])
-low_conf_df.to_csv("low_confidence_images.csv", index=False)
+low_conf_df.to_csv("../processed_data/low_confidence_images.csv", index=False)
 
 # Final logging
 print("\nHand landmark extraction complete!")
@@ -175,5 +185,5 @@ print(f"Skipped images saved in '{SKIPPED_DIR}'")
 print(f"Low-confidence images saved in '{LOW_CONFIDENCE_DIR}'")
 
 if skipped_confidences:
-    print(f"🔍 Average confidence of skipped images: {np.mean(
-        skipped_confidences):.4f}")
+    print(f"Average confidence of skipped images: {np.mean(skipped_confidences
+                                                           ):.4f}")

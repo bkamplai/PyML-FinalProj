@@ -33,10 +33,11 @@ def plot_training_curves(history, title="MLP Training Curves"):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig("Screenshots/mlp_training_curves_tuned.png")
+    plt.savefig("../training/Screenshots/mlp_training_curves_tuned.png")
     plt.show()
 
+
 # Load history and plot
-history_file = "Training History/training_history_mlp_tuned.pkl"
+history_file = "../training/Training History/training_history_mlp_tuned.pkl"
 history_data = load_history(history_file)
 plot_training_curves(history_data, title="MLP Hand Landmarks Tuned Training")

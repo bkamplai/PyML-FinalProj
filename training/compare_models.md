@@ -7,5 +7,7 @@
 | MobileNetV2 (Fine-Tuned) | 99.5473 | 99.4444 | 13.2473 | 15 |
 | ResNet50 | 99.3621 | 99.8889 | 18.2337 | 15 |
 | EfficientNetB0 | 80.8848 | 92.8148 | 20.3998 | 15 |
+| MLP (Hand Landmarks Only) | 95.66 | 94.22 | — | 50 |
+| MLP (Landmarks + Edge) | 87.53 | 87.37 | — | 50 |
 
 **Final Decision: Fine-Tuned MobileNetV2 (Faster for Real-Time Inference)**
