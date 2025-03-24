@@ -33,11 +33,18 @@ h2{
     overflow: hidden;
 }
 
-#video-stream{
+#video-prediction{
     width: 90%;
     height: auto;
     object-fit: contain;
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
     -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+}
+
+#image-container{
+    width: 60%;
+    max-width: 60%;
+    margin: 20px auto;
+    overflow: hidden;
 }

@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASL Signsense</title>
+    <title>ASL SignSense</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1 id="title">ASL Signsense</h1>
-    <h2>Upload a Video for ASL Finger Spelling Recognition</h2>
+    <h1 id="title">ASL SignSense</h1>
+    <h2>Upload a video to test ASL Fingerspelling</h2>
     
+    <!-- Video upload form -->
     <form id="video-upload-form" enctype="multipart/form-data">
         <input type="file" name="video" id="video" accept="video/mp4, video/avi, video/mov" required>
         <button type="submit">Upload Video</button>
@@ -17,10 +18,24 @@
 
     <div id="video-container">
         <!-- Video will be shown here -->
-        <img id="video-stream" src="" alt="Video stream" />
+        <img id="video-prediction" src="" alt="Video" />
     </div>
 
-    <div id="predictions-container"></div>
+    <h2>Upload an image to test ASL Fingerspelling</h2>
+    
+    <!-- Image upload form -->
+    <form id="image-upload-form" enctype="multipart/form-data">
+        <input type="file" name="image" id="image" accept="image/*" required>
+        <button type="submit">Upload Image</button>
+    </form>
+
+    <div id="image-container">
+        <!-- Image will be shown here after prediction -->
+        <img id="uploaded-image" src="" alt="Image" style="max-width: 100%; margin-top: 20px;">
+    </div>
+
+    <div id="image-prediction">
+    </div>
 
     <script>
         // Handle video file upload via AJAX
@@ -36,8 +51,38 @@
             });
 
             // If the upload was successful, start showing the video stream
-            const videoStream = document.getElementById('video-stream');
+            const videoStream = document.getElementById('video-prediction');
             videoStream.src = '/video_stream';  // Set the video stream URL to the new stream endpoint
+        };
+
+        // Handle image file upload via AJAX
+        document.getElementById('image-upload-form').onsubmit = async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('image', document.getElementById('image').files[0]);
+
+            const response = await fetch('/upload_image', {
+                method: 'POST',
+                body: formData
+            });
+
+            // Show the uploaded image immediately in the browser
+            const uploadedImage = document.getElementById('uploaded-image');
+            uploadedImage.src = URL.createObjectURL(document.getElementById('image').files[0]);
+
+            // Now, fetch the processed image with predictions from the server
+            const imageResponse = await fetch('/predict_image');
+
+            // Check if the response is an image (status 200)
+            if (imageResponse.ok) {
+                // Update the image source with the processed image from the server
+                const processedImage = document.getElementById('uploaded-image');
+                processedImage.src = URL.createObjectURL(await imageResponse.blob());  // Convert the image response to a Blob
+            } else {
+                // Handle error if image prediction fails
+                alert("Error predicting image.");
+            }
         };
     </script>
 </body>
