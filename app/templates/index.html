@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Signsense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 id="title">ASL Signsense</h1>
+    <h2>Upload a Video for ASL Finger Spelling Recognition</h2>
+    
+    <form id="video-upload-form" enctype="multipart/form-data">
+        <input type="file" name="video" id="video" accept="video/mp4, video/avi, video/mov" required>
+        <button type="submit">Upload Video</button>
+    </form>
+
+    <div id="video-container">
+        <!-- Video will be shown here -->
+        <img id="video-stream" src="" alt="Video stream" />
+    </div>
+
+    <div id="predictions-container"></div>
+
+    <script>
+        // Handle video file upload via AJAX
+        document.getElementById('video-upload-form').onsubmit = async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('video', document.getElementById('video').files[0]);
+
+            const response = await fetch('/upload_video', {
+                method: 'POST',
+                body: formData
+            });
+
+            // If the upload was successful, start showing the video stream
+            const videoStream = document.getElementById('video-stream');
+            videoStream.src = '/video_stream';  // Set the video stream URL to the new stream endpoint
+        };
+    </script>
+</body>
+</html>

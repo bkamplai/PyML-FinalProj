@@ -1,0 +1,43 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    background-image: radial-gradient(circle at center center, #ff2c2c, #d547ff), repeating-radial-gradient(circle at center center, #ff2c2c, #b3697a, 32px, transparent 64px, transparent 32px);
+    background-blend-mode: multiply;
+    background-color: #d547ff;
+    margin: 0;
+    padding: 0;
+}
+
+h1{
+    color: white;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: saturate(180%) blur(10px);
+    margin: 0;
+    padding: 10px 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+h2{
+    color: white;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: saturate(180%) blur(10px);
+    display: inline-block;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+#video-container{
+    width: 90%;
+    max-width: 90%;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+#video-stream{
+    width: 90%;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+}
