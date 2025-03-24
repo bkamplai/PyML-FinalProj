@@ -8,33 +8,38 @@
 </head>
 <body>
     <h1 id="title">ASL SignSense</h1>
-    <h2>Upload a video to test ASL Fingerspelling</h2>
-    
-    <!-- Video upload form -->
-    <form id="video-upload-form" enctype="multipart/form-data">
-        <input type="file" name="video" id="video" accept="video/mp4, video/avi, video/mov" required>
-        <button type="submit">Upload Video</button>
-    </form>
 
-    <div id="video-container">
-        <!-- Video will be shown here -->
-        <img id="video-prediction" src="" alt="Video" />
-    </div>
+    <!-- Wrapper to control layout -->
+    <div class="main-container">
+        <!-- Image section should be on the left -->
+        <div class="image-section">
+            <h2>Upload an image to test ASL Fingerspelling</h2>
+            <!-- Image upload form -->
+            <form id="image-upload-form" enctype="multipart/form-data">
+                <input type="file" name="image" id="image" accept="image/*" required>
+                <button type="submit">Upload Image</button>
+            </form>
 
-    <h2>Upload an image to test ASL Fingerspelling</h2>
-    
-    <!-- Image upload form -->
-    <form id="image-upload-form" enctype="multipart/form-data">
-        <input type="file" name="image" id="image" accept="image/*" required>
-        <button type="submit">Upload Image</button>
-    </form>
+            <div id="image-container">
+                <!-- Image will be shown here after prediction -->
+                <img id="uploaded-image" src="" alt="Image" style="max-width: 100%;">
+            </div>
+        </div>
 
-    <div id="image-container">
-        <!-- Image will be shown here after prediction -->
-        <img id="uploaded-image" src="" alt="Image" style="max-width: 100%; margin-top: 20px;">
-    </div>
+        <!-- Video section should be on the right -->
+        <div class="video-section">
+            <h2>Upload a video to test ASL Fingerspelling</h2>
+            <!-- Video upload form -->
+            <form id="video-upload-form" enctype="multipart/form-data">
+                <input type="file" name="video" id="video" accept="video/mp4, video/avi, video/mov" required>
+                <button type="submit">Upload Video</button>
+            </form>
 
-    <div id="image-prediction">
+            <div id="video-container">
+                <!-- Video will be shown here -->
+                <img id="video-prediction" src="" alt="Video" />
+            </div>
+        </div>
     </div>
 
     <script>
