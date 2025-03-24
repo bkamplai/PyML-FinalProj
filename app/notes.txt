@@ -1,0 +1,2 @@
+frame_resized = np.expand_dims(frame_resized, axis=0)
+frame_resized = frame_resized / 255.0  # Normalize frame

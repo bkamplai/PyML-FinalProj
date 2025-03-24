@@ -5,6 +5,7 @@ import os
 # Flask imports
 from flask import Flask, render_template, request, jsonify, Response
 from werkzeug.utils import secure_filename
+# http://127.0.0.1:5000/
 
 app = Flask(__name__)
 
@@ -71,17 +72,18 @@ def predict_letters(video_path):
 
         # Resize the frame for mobilenet (128x128)
         frame_resized = cv2.resize(frame_rgb, (128, 128))
+        frame_resized = frame_resized / 255.0
         frame_resized = np.expand_dims(frame_resized, axis=0)
-        frame_resized = frame_resized / 255.0  # Normalize frame
 
         # Make prediction
         prediction = model.predict(frame_resized)
-        letter = labels[np.argmax(prediction)]  # Get the predicted letter
+        letter_prediction = np.argmax(prediction)
+        letter = labels[letter_prediction]  # Get the predicted letter
         # predictions.append(letter)
 
         # Display letter prediction on top left
-        cv2.putText(frame, f'Predicted signed letter: {letter}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-
+        cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction]}", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
         # Convert frame to JPEG and use as response
         _, jpeg = cv2.imencode('.jpg', frame)
         if jpeg is not None:
