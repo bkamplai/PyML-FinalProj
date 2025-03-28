@@ -41,7 +41,7 @@ h2{
 }
 
 #uploaded-image {
-    width: 90%; 
+    width: 80%; 
     height: auto;
     object-fit: contain;
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);

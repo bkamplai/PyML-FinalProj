@@ -70,8 +70,8 @@ def upload_video():
         return jsonify({'error': 'Incorrect file format'})
 
 # Route to play the video
-@app.route('/video_stream')
-def video_stream():
+@app.route('/predict_video')
+def predict_video():
     global uploaded_video_path
     if uploaded_video_path is None:
         return jsonify({'error': 'No video uploaded'})
@@ -106,6 +106,8 @@ def predict_image():
     if jpeg is not None:
         # Convert image to byte stream for transmission
         image_bytes = jpeg.tobytes()
+        os.remove(uploaded_image_path)
+        uploaded_image_path = None
         return Response(image_bytes, content_type='image/jpeg')
     else:
         return jsonify({'error': 'Failed to process image'})
@@ -149,6 +151,8 @@ def predict_letters(video_path):
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
     
     cap.release()
+    os.remove(uploaded_video_path)
+    uploaded_video_path = None
 
 @app.route('/')
 def index():
