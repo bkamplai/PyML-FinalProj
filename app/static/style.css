@@ -27,6 +27,13 @@ h2{
     margin-top: 0;
 }
 
+.webcam-section {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+}
+
 #video-container, #image-container {
     margin-top: 20px;
     overflow: hidden;
@@ -66,6 +73,21 @@ h2{
     height: auto; /* Let the height adjust based on content (image/video) */
     display: flex;
     flex-direction: column;
+}
+
+.webcam-container {
+    width: 85%;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: saturate(180%) blur(10px);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#webcam-feed {
+    width: 85%;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-radius: 3px;
 }
 
 form{

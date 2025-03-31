@@ -22,6 +22,15 @@ app.config['ALLOWED_EXTENSIONS'] = {'mp4', 'mov', 'avi'}
 uploaded_image_path = None
 uploaded_video_path = None
 
+# Handle webcam
+@app.route('/webcam', methods=['GET'])
+def webcam():
+    return render_template('webcam.html')
+
+""" # Run the webcam frames through opencv
+@app.route('/webcam_feed')
+def webcam_feed(): """
+
 # Handle uploads
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
@@ -46,6 +55,7 @@ def upload_image():
     else:
         return jsonify({'error': 'Incorrect file format'})
 
+# Have user upload video
 @app.route('/upload_video', methods=['POST'])
 def upload_video():
     global uploaded_video_path
