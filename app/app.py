@@ -110,6 +110,9 @@ def predict_image():
     letter = labels[letter_prediction]
     confidence = prediction[0][letter_prediction]
 
+    # White and black text
+    cv2.putText(image, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(image, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.putText(image, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
     cv2.putText(image, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
 
@@ -154,6 +157,8 @@ def predict_letters(video_path):
         # predictions.append(letter)
 
         # Display letter prediction on top left
+        cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
         cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
         # Convert frame to JPEG and use as response
