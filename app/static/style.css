@@ -92,6 +92,10 @@ h2{
     margin: 0px auto;
 }
 
+#home {
+    padding-bottom: 15px;
+}
+
 form{
     color: white;
 }

@@ -27,9 +27,12 @@ uploaded_video_path = None
 def webcam():
     return render_template('webcam.html')
 
-""" # Run the webcam frames through opencv
+""" 
+# Run the webcam frames through opencv
 @app.route('/webcam_feed')
-def webcam_feed(): """
+def webcam_feed(): 
+    pass
+"""
 
 # Handle uploads
 @app.route('/upload_image', methods=['POST'])
