@@ -10,7 +10,7 @@ body{
 
 h1{
     color: white;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.80);
     backdrop-filter: saturate(180%) blur(10px);
     margin: 0;
     padding: 20px 20px;
@@ -56,7 +56,7 @@ h2{
 
 .main-container {
     display: flex;
-    justify-content: space-between; /* Spread the sections across the screen */
+    justify-content: space-between;
     padding: 20px;
     width: 100%;
     box-sizing: border-box;
@@ -77,16 +77,19 @@ h2{
 
 .webcam-container {
     width: 75%;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: saturate(180%) blur(10px);
+    height: 75vh;
+    background: rgba(255, 0, 0, 0.15);
+    backdrop-filter: saturate(180%) blur(20px);
     padding: 10px;
     border-radius: 5px;
     margin: 0px auto;
+    box-shadow: 0px 0px 10px 0px rgba(255, 0, 0, 0.75);
 }
 
 #webcam-feed {
     width: 100%;
-    background: rgba(0, 0, 0, 0.65);
+    height: 100%;
+    background: rgba(0, 0, 0, 0.80);
     backdrop-filter: saturate(180%) blur(10px);
     border-radius: 5px;
     margin: 0px auto;
