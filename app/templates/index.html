@@ -8,7 +8,13 @@
 </head>
 <body>
     <h1 id="title">ASL SignSense</h1>
-
+    <!-- To add webcam section here -->
+    <div class="webcam-section">
+        <h2>Test Using Webcam</h2>
+        <form id="begin-webcam" onsubmit="beginWebcam(event)">
+            <button type="begin">Begin Webcam</button>
+        </form>
+    </div>
     <!-- Wrapper to control layout -->
     <div class="main-container">
         <!-- Image section should be on the left -->
@@ -43,6 +49,11 @@
     </div>
 
     <script>
+        // Function to open webcam.html after clicking begin webcam
+        function beginWebcam(event) {
+            event.preventDefault();
+            window.location.href = '/webcam';
+        }
         // Handle video file upload via AJAX
         document.getElementById('video-upload-form').onsubmit = async function(event) {
             event.preventDefault();
