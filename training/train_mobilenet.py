@@ -89,7 +89,7 @@ model = create_finetuned_mobilenet()
 model.summary()
 
 # Train the Model
-EPOCHS = 15  # Transfer learning converges faster, so fewer epochs
+EPOCHS = 100  # Transfer learning converges faster, so fewer epochs
 history = model.fit(
     train_generator,
     validation_data=val_generator,
