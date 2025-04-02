@@ -5,6 +5,7 @@ import os
 # Flask imports
 from flask import Flask, render_template, request, jsonify, Response
 from werkzeug.utils import secure_filename
+
 # http://127.0.0.1:5000/
 
 app = Flask(__name__)
@@ -27,12 +28,47 @@ uploaded_video_path = None
 def webcam():
     return render_template('webcam.html')
 
-""" 
-# Run the webcam frames through opencv
+# Run the webcam frames through opencv and give prediction.
 @app.route('/webcam_feed')
 def webcam_feed(): 
-    pass
-"""
+    cap = cv2.VideoCapture(0)
+    
+    if not cap.isOpened():
+        return jsonify({'error': 'Can\'t load webcam'})
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:  # If no more frames break
+            break
+
+        # BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Resize the frame for mobilenet (128x128)
+        frame_resized = cv2.resize(frame_rgb, (128, 128))
+        frame_resized = frame_resized / 255.0
+        frame_resized = np.expand_dims(frame_resized, axis=0)
+
+        # Make prediction
+        prediction = model.predict(frame_resized)
+        letter_prediction = np.argmax(prediction)
+        letter = labels[letter_prediction]  # Get the predicted letter
+        # predictions.append(letter)
+
+        # Display letter prediction on top left (white and black)
+        cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+        # Convert frame to JPEG and use as response
+        _, jpeg = cv2.imencode('.jpg', frame)
+        if jpeg is not None:
+            frame_bytes = jpeg.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
+    
+    cap.release()
+
 
 # Handle uploads
 @app.route('/upload_image', methods=['POST'])
@@ -134,7 +170,7 @@ def predict_letters(video_path):
     cap = cv2.VideoCapture(video_path)  # Change to 0 for webcam capture
 
     if not cap.isOpened():
-        print("Can't load webcam/video.")
+        print("Can't load video.")
         exit()
 
     while True:
@@ -156,7 +192,7 @@ def predict_letters(video_path):
         letter = labels[letter_prediction]  # Get the predicted letter
         # predictions.append(letter)
 
-        # Display letter prediction on top left
+        # Display letter prediction on top left (white and black)
         cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
