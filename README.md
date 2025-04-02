@@ -19,4 +19,4 @@ Project aims to develop a machine learning-based classifier for ASL fingerspelli
 ### Model: asl_fingerspell_finetuned.keras
 ### [Dataset](https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet)
 ### [Other Dataset?](https://www.kaggle.com/datasets/debashishsau/aslamerican-sign-language-aplhabet-dataset)
-## Delete "space" and "del" folders and rename "nothing" to "Blank".
+### Delete "space" and "del" folders and rename "nothing" to "Blank".
