@@ -11,7 +11,7 @@
     <div class="main-container">
         <!-- Webcam stream will go here. -->
         <div class="webcam-container">
-            <img id="webcam-feed" src="/webcam-feed" alt="Webcam feed with predictions"></video>
+            <video autoplay="true" id="webcam-feed"></video>
         </div>
     </div>
     <form id="home" onsubmit="home(event)">
@@ -19,6 +19,20 @@
     </form>
 
     <script>
+        var video = document.querySelector("#webcam-feed");
+
+        if(navigator.mediaDevices.getUserMedia) {
+            // Ask to use webcam.
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.log("Can't access webcam.");
+                    alert("Can't access webcam.")
+                })
+        }
+
         // Return to homepage
         function home(event) {
             event.preventDefault();

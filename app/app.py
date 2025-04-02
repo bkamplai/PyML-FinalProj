@@ -30,8 +30,10 @@ def webcam():
 
 # Run the webcam frames through opencv and give prediction.
 @app.route('/webcam_feed')
-def webcam_feed(): 
+def webcam_feed():
     cap = cv2.VideoCapture(0)
+    # https://docs.opencv.org/3.4/dd/d00/tutorial_js_video_display.html
+    # https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
     
     if not cap.isOpened():
         return jsonify({'error': 'Can\'t load webcam'})
