@@ -89,7 +89,7 @@ model = create_finetuned_mobilenet()
 model.summary()
 
 # Train the Model
-EPOCHS = 300  # Transfer learning converges faster, so fewer epochs
+EPOCHS = 10  # Transfer learning converges faster, so fewer epochs
 history = model.fit(
     train_generator,
     validation_data=val_generator,
@@ -97,10 +97,10 @@ history = model.fit(
 )
 
 # Save Model
-model.save("asl_fingerspell_mobilenet_finetuned.keras")
+model.save("Models/asl_fingerspell_mobilenet_finetuned_new_dataset.keras")
 
 # Save Training History
-history_path = "training_history_mobilenet_finetuned.pkl"
+history_path = "Training History/training_history_mobilenet_finetuned_new_dataset.pkl"
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
