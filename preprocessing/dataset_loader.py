@@ -8,9 +8,9 @@ from typing import Tuple, Dict
 
 
 # Define dataset paths
-DATASET_PATH: str = "../dataset"
-TRAIN_PATH: str = os.path.join(DATASET_PATH, "Train_Alphabet")
-TEST_PATH: str = os.path.join(DATASET_PATH, "Test_Alphabet")
+DATASET_PATH: str = "../dataset/ASL_Alphabet_Dataset"
+TRAIN_PATH: str = os.path.join(DATASET_PATH, "asl_alphabet_train")
+TEST_PATH: str = os.path.join(DATASET_PATH, "asl_alphabet_test")
 
 # Target image size and batch size
 IMG_SIZE: Tuple[int, int] = (128, 128)  # (Width, Height)
