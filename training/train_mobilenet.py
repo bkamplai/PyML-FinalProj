@@ -68,7 +68,7 @@ def create_finetuned_mobilenet() -> Sequential:
 model = create_finetuned_mobilenet()
 model.summary()
 
-EPOCHS = 100
+EPOCHS = 300
 history = model.fit(
     train_dataset,
     validation_data=val_dataset,
