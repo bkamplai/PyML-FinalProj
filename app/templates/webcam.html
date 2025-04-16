@@ -12,8 +12,6 @@
         <!-- Webcam stream will go here. -->
         <div class="webcam-container">
             <video autoplay="true" id="webcam-feed"></video>
-            <canvas id="canvas" style="display: none;"></canvas>
-            <div id="prediction"></div>
         </div>
     </div>
     <form id="home" onsubmit="home(event)">
@@ -22,48 +20,17 @@
 
     <script>
         var video = document.querySelector("#webcam-feed");
-        var canvas = document.querySelector("#canvas");
-        var context = canvas.getContext('2d');
-        var predictionElement = document.querySelector("#prediction");
 
         if(navigator.mediaDevices.getUserMedia) {
             // Ask to use webcam.
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function (stream) {
                     video.srcObject = stream;
-                    setInterval(captureFrame, 100); // Capture frame every 100ms (10 FPS)
                 })
                 .catch(function (error) {
                     console.log("Can't access webcam.");
                     alert("Can't access webcam.")
                 })
-        }
-
-        function captureFrame() {
-            // Draw the current frame from the video to the canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert canvas to base64 image
-            var imageData = canvas.toDataURL('image/jpeg');
-
-            // Send the image data to the server for prediction
-            fetch('/predict_frame', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image: imageData })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.prediction) {
-                    // Display prediction and confidence
-                    predictionElement.innerHTML = `Predicted letter: ${data.prediction.letter} <br> Confidence: ${data.prediction.confidence.toFixed(2)}%`;
-                }
-            })
-            .catch(error => {
-                console.error('Error sending frame:', error);
-            });
         }
 
         // Return to homepage
