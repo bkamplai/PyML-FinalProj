@@ -1,15 +1,16 @@
 import sys  # type: ignore
 import os
 import pickle
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import Sequential  # type: ignore
+from tensorflow.keras.applications import MobileNetV2   # type: ignore
+from tensorflow.keras.layers import (   # type: ignore
+    GlobalAveragePooling2D, Dense, Dropout)
+from tensorflow.keras.optimizers import Adam  # type: ignore
 
 # Get the parent directory and add it to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from preprocessing.dataset_loader import create_generators
+from preprocessing.dataset_loader import create_generators  # noqa: E402
 
 # Load dataset
 train_generator, val_generator, test_generator = create_generators()
@@ -97,10 +98,10 @@ history = model.fit(
 )
 
 # Save Model
-model.save("Models/asl_fingerspell_mobilenet_finetuned_new_dataset.keras")
+model.save("Models/asl_fingerspell_mobilenet_finetuned_combined.keras")
 
 # Save Training History
-history_path = "Training History/training_history_mobilenet_finetuned_new_dataset.pkl"
+history_path = "Training History/training_history_mobilenet_finetuned_combined.pkl"  # noqa: E501
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
