@@ -1,0 +1,104 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    background-image: radial-gradient(circle at center center, #ff2c2c, #d547ff), repeating-radial-gradient(circle at center center, #ff2c2c, #b3697a, 32px, transparent 64px, transparent 32px);
+    background-blend-mode: multiply;
+    background-color: #d547ff;
+    margin: 0;
+    padding: 0;
+}
+
+h1{
+    color: white;
+    background: rgba(0,0,0,0.80);
+    backdrop-filter: saturate(180%) blur(10px);
+    margin: 0;
+    padding: 20px 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+h2{
+    color: white;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: saturate(180%) blur(10px);
+    display: inline-block;
+    border-radius: 10px;
+    padding: 20px 30px;
+    margin-top: 0;
+}
+
+.webcam-section {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#video-container, #image-container {
+    margin-top: 20px;
+    overflow: hidden;
+    color: white;
+}
+
+#video-prediction {
+    width: 90%;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+#uploaded-image {
+    width: 80%; 
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.video-section, .image-section {
+    width: 49%;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-radius: 10px;
+    box-sizing: border-box;
+    min-height: 85vh; /* Ensure that sections take up at least 85% of the viewport height */
+    height: auto; /* Let the height adjust based on content (image/video) */
+    display: flex;
+    flex-direction: column;
+}
+
+.webcam-container {
+    width: 75%;
+    height: 75vh;
+    background: rgba(255, 0, 0, 0.15);
+    backdrop-filter: saturate(180%) blur(20px);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0px auto;
+    box-shadow: 0px 0px 10px 0px rgba(255, 0, 0, 0.75);
+}
+
+#webcam-feed {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.80);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-radius: 5px;
+    margin: 0px auto;
+}
+
+#home {
+    padding-bottom: 15px;
+}
+
+form{
+    color: white;
+}

@@ -1,11 +1,9 @@
-import os
 import pickle
 import tensorflow as tf  # type: ignore
 from tensorflow.keras.preprocessing.image import (  # type: ignore
     ImageDataGenerator
 )
-from typing import Tuple, Dict
-
+from typing import Tuple
 
 # Define dataset paths
 DATASET_PATH: str = "../dataset/Combined Dataset"
@@ -50,52 +48,72 @@ def create_generators() -> Tuple[
         brightness_range=[0.5, 1.5],
         # Automatically split into 80% train, 20% validation
         validation_split=0.2,
+        subset="training",
+        seed=42,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
     )
 
-    test_datagen: ImageDataGenerator = ImageDataGenerator(
-        rescale=1.0 / 255)  # Only rescale test set
+    train_ds_2 = tf.keras.utils.image_dataset_from_directory(
+        DATASET_2,
+        validation_split=0.2,
+        subset="training",
+        seed=42,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
+    )
 
-    # Load training & validation data using generator
-    train_generator: tf.keras.preprocessing.image.DirectoryIterator = \
-        train_datagen.flow_from_directory(
-            TRAIN_PATH,
-            target_size=IMG_SIZE,
-            batch_size=BATCH_SIZE,
-            class_mode="sparse",  # Sparse labels for classification
-            subset="training",
-        )
+    val_ds_1 = tf.keras.utils.image_dataset_from_directory(
+        DATASET_1,
+        validation_split=0.2,
+        subset="validation",
+        seed=42,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
+    )
 
-    val_generator: tf.keras.preprocessing.image.DirectoryIterator = \
-        train_datagen.flow_from_directory(
-            TRAIN_PATH,
-            target_size=IMG_SIZE,
-            batch_size=BATCH_SIZE,
-            class_mode="sparse",
-            subset="validation",
-        )
+    val_ds_2 = tf.keras.utils.image_dataset_from_directory(
+        DATASET_2,
+        validation_split=0.2,
+        subset="validation",
+        seed=42,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
+    )
 
-    # Load test data (no augmentation)
-    test_generator: tf.keras.preprocessing.image.DirectoryIterator = \
-        test_datagen.flow_from_directory(
-            TEST_PATH,
-            target_size=IMG_SIZE,
-            batch_size=BATCH_SIZE,
-            class_mode="sparse",
-        )
+    test_ds_1 = tf.keras.utils.image_dataset_from_directory(
+        TESTSET_1,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
+    )
 
-    return train_generator, val_generator, test_generator
+    test_ds_2 = tf.keras.utils.image_dataset_from_directory(
+        TESTSET_2,
+        image_size=IMG_SIZE,
+        batch_size=BATCH_SIZE
+    )
+
+    train_ds = train_ds_1.concatenate(train_ds_2).prefetch(
+        buffer_size=tf.data.AUTOTUNE)
+    val_ds = val_ds_1.concatenate(val_ds_2).prefetch(
+        buffer_size=tf.data.AUTOTUNE)
+    test_ds = test_ds_1.concatenate(test_ds_2).prefetch(
+        buffer_size=tf.data.AUTOTUNE)
+
+    # Use a temporary generator to extract class names
+    temp_gen = ImageDataGenerator().flow_from_directory(
+        DATASET_1,
+        target_size=IMG_SIZE,
+        batch_size=1,
+        shuffle=False
+    )
+
+    with open("label_mapping.pkl", "wb") as f:
+        pickle.dump(temp_gen.class_indices, f)
+
+    return train_ds, val_ds, test_ds
 
 
 if __name__ == "__main__":
-    print("Creating data generators...")
-
-    train_generator, val_generator, test_generator = create_generators()
-
-    # Save label mapping for future reference
-    label_to_index: Dict[str, int] = train_generator.class_indices
-    with open("label_mapping.pkl", "wb") as f:
-        pickle.dump(label_to_index, f)
-
-    print(f"Class labels saved: {label_to_index}")
-    print("Data generators are ready. Use train_generator, val_generator, and "
-          + "test_generator for training.")
+    train_dataset, val_dataset, test_dataset = create_generators()
+    print("Datasets created and label mapping saved.")

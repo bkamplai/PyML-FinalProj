@@ -13,36 +13,25 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from preprocessing.dataset_loader import create_generators  # noqa: E402
 
 # Load dataset
-train_generator, val_generator, test_generator = create_generators()
+train_dataset, val_dataset, test_dataset = create_generators()
 
 
 # Define MobileNetV2 Model
 def create_mobilenet_model() -> Sequential:
-    """
-    Creates a Transfer Learning model using MobileNetV2.
-
-    Returns:
-        A compiled Keras Sequential model.
-    """
-    # Load MobileNetV2 as the base model (pre-trained on ImageNet)
     base_model = MobileNetV2(input_shape=(128, 128, 3), include_top=False,
                              weights="imagenet")
-
-    # Freeze the base model layers (so we only train our custom layers)
     base_model.trainable = False
 
-    # Add custom classification layers
     model = Sequential([
         base_model,
-        GlobalAveragePooling2D(),   # Reduce feature maps to a vector
+        GlobalAveragePooling2D(),
         Dense(256, activation="relu"),
         Dropout(0.3),
-        Dense(27, activation="softmax")  # 27 classes (A-Z + Blank)
+        Dense(27, activation="softmax")
     ])
 
-    # Compile the model
     model.compile(
-        optimizer=Adam(learning_rate=0.0005),   # Slower learning rate
+        optimizer=Adam(learning_rate=0.0005),
         loss="sparse_categorical_crossentropy",
         metrics=["accuracy"]
     )
@@ -52,32 +41,22 @@ def create_mobilenet_model() -> Sequential:
 
 # Define Fine-Tuned MobileNetV2 Model
 def create_finetuned_mobilenet() -> Sequential:
-    """
-    Creates a fine-tuned MobileNetV2 model by unfreezing some layers.
-
-    Returns:
-        A compiled Keras Sequential model.
-    """
-    # Load MobileNetV2 as the base model
     base_model = MobileNetV2(input_shape=(128, 128, 3), include_top=False,
                              weights="imagenet")
 
-    # Unfreeze the last few layers for fine-tuning
-    for layer in base_model.layers[-20:]:  # Unfreezing the last 20 layers
+    for layer in base_model.layers[-20:]:
         layer.trainable = True
 
-    # Add custom classification layers
     model = Sequential([
         base_model,
-        GlobalAveragePooling2D(),  # Reduce feature maps to a vector
+        GlobalAveragePooling2D(),
         Dense(256, activation="relu"),
         Dropout(0.3),
-        Dense(27, activation="softmax")  # 27 classes (A-Z + Blank)
+        Dense(27, activation="softmax")
     ])
 
-    # Compile the model with a lower learning rate for fine-tuning
     model.compile(
-        optimizer=Adam(learning_rate=0.0001),  # Lower LR for gradual updates
+        optimizer=Adam(learning_rate=0.0001),
         loss="sparse_categorical_crossentropy",
         metrics=["accuracy"]
     )
@@ -85,28 +64,25 @@ def create_finetuned_mobilenet() -> Sequential:
     return model
 
 
-# Create and summarize the model
 model = create_finetuned_mobilenet()
 model.summary()
 
-# Train the Model
-EPOCHS = 100  # Transfer learning converges faster, so fewer epochs
+EPOCHS = 300
 history = model.fit(
-    train_generator,
-    validation_data=val_generator,
+    train_dataset,
+    validation_data=val_dataset,
     epochs=EPOCHS
 )
 
 # Save Model
-model.save("Models/asl_fingerspell_mobilenet_finetuned_combined.keras")
+model.save("Models/asl_fingerspell_mobilenet_finetuned_new_dataset.keras")
 
 # Save Training History
-history_path = "Training History/training_history_mobilenet_finetuned_combined.pkl"  # noqa: E501
+history_path = "Training History/training_history_mobilenet_finetuned_new_dataset.pkl"
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
 print(f"Training history saved to {history_path}.")
 
-# Evaluate on Test Set
-test_loss, test_acc = model.evaluate(test_generator)
-print(f"\n Fine-Tuned MobileNetV2 Test Accuracy: {test_acc:.4f}")
+test_loss, test_acc = model.evaluate(test_dataset)
+print(f"\nFine-Tuned MobileNetV2 Test Accuracy: {test_acc:.4f}")
