@@ -1,17 +1,17 @@
 import cv2
 import numpy as np
 import tensorflow as tf
+import base64
+from io import BytesIO
+from flask import Flask, render_template, request, jsonify
+from PIL import Image
 import os
-# Flask imports
-from flask import Flask, render_template, request, jsonify, Response
-from werkzeug.utils import secure_filename
-
-# http://127.0.0.1:5000/
 
 app = Flask(__name__)
 
 # Load the model
 model = tf.keras.models.load_model('../training/Models/asl_fingerspell_mobilenet_finetuned.keras')
+
 # All categories for the ASL alphabet
 labels = ['A', 'B', 'Blank', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -23,54 +23,48 @@ app.config['ALLOWED_EXTENSIONS'] = {'mp4', 'mov', 'avi'}
 uploaded_image_path = None
 uploaded_video_path = None
 
-# Handle webcam
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/webcam', methods=['GET'])
 def webcam():
     return render_template('webcam.html')
 
-# Run the webcam frames through opencv and give prediction.
-@app.route('/webcam_feed')
-def webcam_feed():
-    cap = cv2.VideoCapture(0)
-    # https://docs.opencv.org/3.4/dd/d00/tutorial_js_video_display.html
-    # https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
-    
-    if not cap.isOpened():
-        return jsonify({'error': 'Can\'t load webcam'})
+# Route to process frames sent from the browser
+@app.route('/predict_frame', methods=['POST'])
+def predict_frame():
+    data = request.get_json()
+    image_data = data['image']  # Base64 encoded image data
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:  # If no more frames break
-            break
+    # Decode the base64 string to an image
+    image_data = image_data.split(',')[1]  # Remove the base64 prefix
+    image_bytes = base64.b64decode(image_data)
+    image = Image.open(BytesIO(image_bytes))
 
-        # BGR to RGB
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # Convert the image to an OpenCV format (numpy array)
+    open_cv_image = np.array(image)
+    # Convert RGB to BGR (OpenCV uses BGR by default)
+    open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
 
-        # Resize the frame for mobilenet (128x128)
-        frame_resized = cv2.resize(frame_rgb, (128, 128))
-        frame_resized = frame_resized / 255.0
-        frame_resized = np.expand_dims(frame_resized, axis=0)
+    # Resize the image for the model (128x128)
+    image_resized = cv2.resize(open_cv_image, (128, 128))
+    image_resized = image_resized / 255.0
+    image_resized = np.expand_dims(image_resized, axis=0)
 
-        # Make prediction
-        prediction = model.predict(frame_resized)
-        letter_prediction = np.argmax(prediction)
-        letter = labels[letter_prediction]  # Get the predicted letter
-        # predictions.append(letter)
+    # Make prediction
+    prediction = model.predict(image_resized)
+    letter_prediction = np.argmax(prediction)
+    letter = labels[letter_prediction]
+    confidence = prediction[0][letter_prediction] * 100
 
-        # Display letter prediction on top left (white and black)
-        cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
-        # Convert frame to JPEG and use as response
-        _, jpeg = cv2.imencode('.jpg', frame)
-        if jpeg is not None:
-            frame_bytes = jpeg.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
-    
-    cap.release()
-
+    # Return the prediction and confidence
+    return jsonify({
+        'prediction': {
+            'letter': letter,
+            'confidence': confidence
+        }
+    })
 
 # Handle uploads
 @app.route('/upload_image', methods=['POST'])
@@ -91,7 +85,7 @@ def upload_image():
 
         uploaded_image_path = image_path
 
-        # Image sucessfully uploaded
+        # Image successfully uploaded
         return jsonify({'message': "Image uploaded"})
     else:
         return jsonify({'error': 'Incorrect file format'})
@@ -105,7 +99,7 @@ def upload_video():
         return jsonify({'error': 'No video file'})
     video = request.files['video']
 
-    if video.filename== '':
+    if video.filename == '':
         return jsonify({'error': 'No file selected'})
     
     if video:
@@ -115,7 +109,7 @@ def upload_video():
 
         uploaded_video_path = video_path
 
-        # Video sucessfully uploaded
+        # Video successfully uploaded
         return jsonify({'message': "Video uploaded"})
     else:
         return jsonify({'error': 'Incorrect file format'})
@@ -210,10 +204,5 @@ def predict_letters(video_path):
     os.remove(uploaded_video_path)
     uploaded_video_path = None
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run
