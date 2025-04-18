@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASL SignSense</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <h1 id="title">ASL SignSense</h1>
     <div class="main-container">
-        <!-- Webcam stream will go here. -->
+        <!-- Webcam stream will go here -->
         <div class="webcam-container">
-            <video autoplay="true" id="webcam-feed"></video>
+            <img id="webcam-feed" alt="Webcam Feed" style="max-width: 100%;">
         </div>
     </div>
     <form id="home" onsubmit="home(event)">
@@ -19,20 +21,9 @@
     </form>
 
     <script>
-        var video = document.querySelector("#webcam-feed");
-
-        if(navigator.mediaDevices.getUserMedia) {
-            // Ask to use webcam.
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function (stream) {
-                    video.srcObject = stream;
-                })
-                .catch(function (error) {
-                    console.log("Can't access webcam.");
-                    alert("Can't access webcam.")
-                })
-        }
-
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("webcam-feed").src = "/webcam_feed?" + new Date().getTime();
+        });
         // Return to homepage
         function home(event) {
             event.preventDefault();
@@ -40,4 +31,5 @@
         }
     </script>
 </body>
+
 </html>

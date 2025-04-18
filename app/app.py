@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 # Load the model
-model = tf.keras.models.load_model('../training/Models/asl_fingerspell_mobilenet_finetuned.keras')
+model = tf.keras.models.load_model('../training/Models/asl_fingerspell_mobilenet_finetuned_combined.keras')
 # All categories for the ASL alphabet
 labels = ['A', 'B', 'Blank', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -28,48 +28,78 @@ uploaded_video_path = None
 def webcam():
     return render_template('webcam.html')
 
+def generate_frames():
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
+
+        # Predict
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        resized = cv2.resize(frame_rgb, (128, 128)) / 255.0
+        input_data = np.expand_dims(resized, axis=0)
+        prediction = model.predict(input_data, verbose=0)
+        letter = labels[np.argmax(prediction)]
+        confidence = np.max(prediction) * 100
+
+        # Overlay text
+        cv2.putText(frame, f"{letter} ({confidence:.2f}%)", (10, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+        # Encode JPEG
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame_bytes = buffer.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
+    cap.release()
+
 # Run the webcam frames through opencv and give prediction.
 @app.route('/webcam_feed')
 def webcam_feed():
-    cap = cv2.VideoCapture(0)
-    # https://docs.opencv.org/3.4/dd/d00/tutorial_js_video_display.html
-    # https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    # cap = cv2.VideoCapture(0)
+    # # https://docs.opencv.org/3.4/dd/d00/tutorial_js_video_display.html
+    # # https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
     
-    if not cap.isOpened():
-        return jsonify({'error': 'Can\'t load webcam'})
+    # if not cap.isOpened():
+    #     return jsonify({'error': 'Can\'t load webcam'})
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:  # If no more frames break
-            break
+    # while True:
+    #     ret, frame = cap.read()
+    #     if not ret:  # If no more frames break
+    #         break
 
-        # BGR to RGB
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #     # BGR to RGB
+    #     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Resize the frame for mobilenet (128x128)
-        frame_resized = cv2.resize(frame_rgb, (128, 128))
-        frame_resized = frame_resized / 255.0
-        frame_resized = np.expand_dims(frame_resized, axis=0)
+    #     # Resize the frame for mobilenet (128x128)
+    #     frame_resized = cv2.resize(frame_rgb, (128, 128))
+    #     frame_resized = frame_resized / 255.0
+    #     frame_resized = np.expand_dims(frame_resized, axis=0)
 
-        # Make prediction
-        prediction = model.predict(frame_resized)
-        letter_prediction = np.argmax(prediction)
-        letter = labels[letter_prediction]  # Get the predicted letter
-        # predictions.append(letter)
+    #     # Make prediction
+    #     prediction = model.predict(frame_resized)
+    #     letter_prediction = np.argmax(prediction)
+    #     letter = labels[letter_prediction]  # Get the predicted letter
+    #     # predictions.append(letter)
 
-        # Display letter prediction on top left (white and black)
-        cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
-        cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
-        # Convert frame to JPEG and use as response
-        _, jpeg = cv2.imencode('.jpg', frame)
-        if jpeg is not None:
-            frame_bytes = jpeg.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
+    #     # Display letter prediction on top left (white and black)
+    #     cv2.putText(frame, f"Predicted signed letter: {letter}", (8, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    #     cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (8, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    #     cv2.putText(frame, f"Predicted signed letter: {letter}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+    #     cv2.putText(frame, f"Confidence: {prediction[0][letter_prediction] * 100:.2f}%", (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+    #     # Convert frame to JPEG and use as response
+    #     _, jpeg = cv2.imencode('.jpg', frame)
+    #     if jpeg is not None:
+    #         frame_bytes = jpeg.tobytes()
+    #         yield (b'--frame\r\n'
+    #                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
     
-    cap.release()
+    # cap.release()
 
 
 # Handle uploads
