@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import os
+import mediapipe as mp
 # Flask imports
 from flask import Flask, render_template, request, jsonify, Response
 from werkzeug.utils import secure_filename
@@ -9,6 +10,16 @@ from werkzeug.utils import secure_filename
 # http://127.0.0.1:5000/
 
 app = Flask(__name__)
+
+mp_drawing = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+
+hands = mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=2,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
 
 # Load the model
 model = tf.keras.models.load_model('../training/Models/asl_fingerspell_mobilenet_finetuned_combined.keras')
@@ -43,6 +54,14 @@ def generate_frames():
         prediction = model.predict(input_data, verbose=0)
         letter = labels[np.argmax(prediction)]
         confidence = np.max(prediction) * 100
+        
+        results = hands.process(frame)
+
+        frame.flags.writeable = True
+        if results.multi_hand_landmarks:
+            for hand_landmarks in results.multi_hand_landmarks:
+                mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+        # End of Aidans mess
 
         # Overlay text
         cv2.putText(frame, f"{letter} ({confidence:.2f}%)", (10, 40),
