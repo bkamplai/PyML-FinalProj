@@ -75,10 +75,10 @@ history = model.fit(
 )
 
 # Save Model
-model.save("Models/asl_fingerspell_mobilenet_finetuned_new_dataset.keras")
+model.save("Models/asl_fingerspell_mobilenet_finetuned_combined.keras")
 
 # Save Training History
-history_path = "Training History/training_history_mobilenet_finetuned_new_dataset.pkl"
+history_path = "Training History/training_history_mobilenet_finetuned_combined.pkl"
 with open(history_path, "wb") as f:
     pickle.dump(history.history, f)
 
