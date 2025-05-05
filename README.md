@@ -10,7 +10,13 @@
 
 ## How to Run
 1. Download git repo as a zip.
-2. 
+2. Traverse to app folder and run the app.py program using Python.
+   ```
+   cd app
+   python3 app.py
+   ```
+3. Open http://127.0.0.1:5000/ in web browser.
+4. Upload an image, a video, or click on link to start live webcam.
 
 ## Abstract
 ### Title: SignSense: ASL Fingerspelling Classifier
