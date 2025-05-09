@@ -4,14 +4,14 @@
 
  | Name | Email | Roles |
  |------|-------|--------------|
- |Aidan K.|amkavanagh@mavs.coloradomesa.edu||
- |Elena S.|eeschmitt@mavs.coloradomesa.edu||
- |Brandon K. |bekamplain@mavs.coloradomesa.edu ||
+ |Aidan K.|amkavanagh@mavs.coloradomesa.edu|Hand Tracking Skeleton Model|
+ |Elena S.|eeschmitt@mavs.coloradomesa.edu|Website/Flask|
+ |Brandon K. |bekamplain@mavs.coloradomesa.edu |Model Training|
 
 ## How to Run
 1. Download git repo as a zip.
 2. Traverse to app folder and run the app.py program using Python.
-   ```
+   ```bash
    cd app
    python3 app.py
    ```
@@ -26,7 +26,7 @@ American Sign Language (ASL) is a vital means of communication for the Deaf and 
 
 Project aims to develop a machine learning-based classifier for ASL fingerspelling recognition using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL education and accessibility.
 
-### Model: asl_fingerspell_finetuned.keras
+### Model: asl_fingerspell_finetuned_combined.keras
 ### [Dataset](https://www.kaggle.com/datasets/lexset/synthetic-asl-alphabet)
 ### [Other Dataset?](https://www.kaggle.com/datasets/debashishsau/aslamerican-sign-language-aplhabet-dataset)
 ### Delete "space" and "del" folders and rename "nothing" to "Blank".
