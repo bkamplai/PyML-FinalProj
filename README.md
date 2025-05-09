@@ -8,6 +8,29 @@
  |Elena S.|eeschmitt@mavs.coloradomesa.edu|Website/Flask|
  |Brandon K. |bekamplain@mavs.coloradomesa.edu |Model Training|
 
+## Our Grade using Rubric
+
+| Criteria | Score (1-5) | Justification |
+| :-- | :--: | :-- |
+| **1. Problem Understanding** |
+| Clearly defined problem statement | 5 | Automatic recognition of ASL fingerspelling remains a challenging problem due to variations in hand shapes, lighting conditions, and signer differences.|
+| Understanding of the domain and context | 5 | Project aims to develop a machine learning-based classifier for ASL fingerspelling recognition using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL education and accessibility.|
+| **2. Data Preprocessing** |
+| Data cleaning and handling missing values | 5 | There wasn't necessarily a need for handling missing values since the models are trained on images from the datasets. When combining the two datasets, data cleaning was used to match up the differences in folder structures.|
+| Feature engineering and selection | 5 | See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/compare_models.md|
+| Data normalization and scaling | 5 | |
+| **3. Model Selection and Evaluation** |
+| Selection of appropriate ML algorithms | 5 | See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/compare_models.md|
+| Model training and tuning | 5 | |
+| Evaluation metrics and performance analysis | 5 | |
+| **4. Creativity and Innovation** |
+| Novelty and originality of approach | 5 | |
+| Exploration of advanced techniques (Deep Learning, e.g.) | 5 | |
+| **5. Presentation** |
+| Quality of visualizations and insights | 5 | |
+| Ability to communicate results effectively | 5 | |
+| **Final Score**| 60/60 |
+
 ## How to Run
 1. Download git repo as a zip.
 2. Traverse to app folder and run the app.py program using Python.
