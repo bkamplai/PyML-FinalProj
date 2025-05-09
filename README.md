@@ -13,22 +13,22 @@
 | Criteria | Score (1-5) | Justification |
 | :-- | :--: | :-- |
 | **1. Problem Understanding** |
-| Clearly defined problem statement | 5 | Automatic recognition of ASL fingerspelling remains a challenging problem due to variations in hand shapes, lighting conditions, and signer differences.|
+| Clearly defined problem statement | 5 | ASL fingerspelling recognition remains a challenging task due to variability in hand shapes, signer styles, and environmental conditions such as lighting. |
 | Understanding of the domain and context | 5 | Project aims to develop a machine learning-based classifier for ASL fingerspelling recognition using CNNs and image augmentation. The system will enable real-time recognition and feedback for ASL education and accessibility.|
 | **2. Data Preprocessing** |
-| Data cleaning and handling missing values | 5 | There wasn't necessarily a need for handling missing values since the models are trained on images from the datasets. When combining the two datasets, data cleaning was used to match up the differences in folder structures.|
+| Data cleaning and handling missing values | 5 | While missing values weren’t a concern, data cleaning was performed to reconcile structural inconsistencies when merging two large ASL datasets. |
 | Feature engineering and selection | 5 | See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/compare_models.md|
-| Data normalization and scaling | 5 | |
+| Data normalization and scaling | 5 | Images were normalized to the [0, 1] range, and combining both datasets increased class sample counts from ~900 to over 9,000, improving model generalizability. |
 | **3. Model Selection and Evaluation** |
-| Selection of appropriate ML algorithms | 5 | See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/compare_models.md|
-| Model training and tuning | 5 | |
-| Evaluation metrics and performance analysis | 5 | |
+| Selection of appropriate ML algorithms | 5 | Evaluated MLP, CNN, MobileNetV2, ResNet50, and EfficientNetB0. See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/compare_models.md|
+| Model training and tuning | 5 | Tuned hyperparameters (epochs, dropout, learning rate), and used transfer learning with frozen and fine-tuned MobileNetV2. See https://github.com/bkamplai/PyML-FinalProj/blob/main/training/train_mobilenet.py |
+| Evaluation metrics and performance analysis | 5 | Used training/validation/test accuracy, loss curves, and confusion matrices. See https://github.com/bkamplai/PyML-FinalProj/tree/main/training/Screenshots |
 | **4. Creativity and Innovation** |
-| Novelty and originality of approach | 5 | |
-| Exploration of advanced techniques (Deep Learning, e.g.) | 5 | |
+| Novelty and originality of approach | 5 | We introduce a novel ASL recognition pipeline that combines multi-dataset training, confidence-aware filtering, and real-time webcam inference for robust, interactive deployment. |
+| Exploration of advanced techniques (Deep Learning, e.g.) | 5 | Leveraged deep learning with transfer learning, dropout regularization, data augmentation, and model fine-tuning. See https://github.com/bkamplai/PyML-FinalProj/tree/main/training|
 | **5. Presentation** |
-| Quality of visualizations and insights | 5 | |
-| Ability to communicate results effectively | 5 | |
+| Quality of visualizations and insights | 5 | Our model comparison includes accuracy/loss plots and test predictions to illustrate performance trends and classifier effectiveness.|
+| Ability to communicate results effectively | 5 | The presentation follows the START structure, includes a demo slide, and breaks down technical steps clearly.|
 | **Final Score**| 60/60 |
 
 ## How to Run
